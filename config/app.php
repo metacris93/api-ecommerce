@@ -123,6 +123,7 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'api_latest' => 2,
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
