@@ -17,7 +17,7 @@ class ProductControllerTest extends TestCase
     {
         Sanctum::actingAs(User::factory()->create());
         Product::factory(5)->create();
-        $response = $this->getJson('/api/products');
+        $response = $this->getJson('/api/v1/products');
         $response->assertSuccessful();
         $response->assertHeader('content-type', 'application/json');
         //$response->assertJsonCount(5, 'data.data');
@@ -29,7 +29,7 @@ class ProductControllerTest extends TestCase
             'name' => $this->faker->name,
             'price' => $this->faker->numberBetween(1, 100),
         ];
-        $response = $this->postJson('/api/products', $data);
+        $response = $this->postJson('/api/v1/products', $data);
 
         $response->assertSuccessful();
         $response->assertHeader('content-type', 'application/json');
@@ -43,7 +43,7 @@ class ProductControllerTest extends TestCase
             'name' => 'Product updated',
             'price' => $this->faker->numberBetween(1, 100),
         ];
-        $response = $this->patchJson("/api/products/{$product->getKey()}", $data);
+        $response = $this->patchJson("/api/v1/products/{$product->getKey()}", $data);
         $response->assertSuccessful();
         $response->assertHeader('content-type', 'application/json');
     }
@@ -52,7 +52,7 @@ class ProductControllerTest extends TestCase
         Sanctum::actingAs(User::factory()->create());
         $product = Product::factory()->create();
 
-        $response = $this->getJson("/api/products/{$product->getKey()}");
+        $response = $this->getJson("/api/v1/products/{$product->getKey()}");
 
         $response->assertSuccessful();
         $response->assertHeader('content-type', 'application/json');
@@ -62,7 +62,7 @@ class ProductControllerTest extends TestCase
         Sanctum::actingAs(User::factory()->create());
         $product = Product::factory()->create();
 
-        $response = $this->deleteJson("/api/products/{$product->getKey()}");
+        $response = $this->deleteJson("/api/v1/products/{$product->getKey()}");
 
         $response->assertSuccessful();
         $response->assertHeader('content-type', 'application/json');
