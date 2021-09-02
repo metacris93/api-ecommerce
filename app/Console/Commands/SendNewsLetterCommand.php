@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use App\Notifications\NewsLetterNotification;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class SendNewsLetterCommand extends Command
@@ -50,14 +51,19 @@ class SendNewsLetterCommand extends Command
 
         if ($count)
         {
-            $builder->whereNotNull('email_verified_at')
-            ->each(function (User $user)
-            {
-                $user->notify(new NewsLetterNotification());
-            });
+            $builder
+                ->whereNotNull('email_verified_at')
+                //->whereDate('email_verified_at', '<=', Carbon::now()->subDays(7)->format('Y-m-d'))
+                ->each(function (User $user)
+                {
+                    $user->notify(new NewsLetterNotification());
+                });
             $this->info("Se enviaron {$count} correos");
             $this->output->progressFinish();
         }
-        $this->info("no se envió ningún correo");
+        else
+        {
+            $this->info("no se envió ningún correo");
+        }
     }
 }

@@ -1,7 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
-//use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\NewsLetterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,8 +19,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('register', [AuthController::class, 'register']);
 //'auth:api'
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-//Route::apiResource('products', 'ProductController');
-Route::apiResource('products', ProductController::class);
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+Route::apiResource('products', 'ProductController');
+
+Route::post('/newsletter', [NewsLetterController::class, 'send']);
+
+Route::middleware('auth:sanctum')->post('products/rate', [ProductController::class, 'rate']);

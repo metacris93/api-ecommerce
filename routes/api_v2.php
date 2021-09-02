@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NewsLetterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,4 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 // Route::apiResource('products', ProductController::class);
+//Route::post('/newsletter', [NewsLetterController::class, 'send']);

@@ -75,4 +75,8 @@ class ProductController extends Controller
 
         return response()->json();
     }
+    public function rate(Request $request)
+    {
+        
+    }
 }
