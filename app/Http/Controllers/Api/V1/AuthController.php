@@ -8,23 +8,33 @@ use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     use ApiResponser;
     public function login(Request $request)
     {
-        $this->validateLogin($request);
-
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-              'message' => 'Unauthorized'
-            ], 401);
-        }
-        return response()->json([
-            'token' => $request->user()->createToken($request->device)->plainTextToken,
-            'message' => 'Success'
+        $fields = Validator::make($request->all(), [
+            'email' => 'required|string',
+            'password' => 'required|string'
         ]);
+        if ($fields->fails()) {
+            return $this->error($fields->errors(), 401);
+        }
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return $this->error('Unauthorized', 401);
+        }
+        $res = [
+            'token' => $request->user()->createToken('AUTH_TOKEN')->plainTextToken,
+            'token_type' => 'Bearer'
+        ];
+        return $this->success($res, 'OK');
+    }
+    public function logout(Request $request)
+    {
+        auth()->user()->tokens()->delete();
+        return $this->success('', 'Logged out');
     }
     public function register(Request $request)
     {

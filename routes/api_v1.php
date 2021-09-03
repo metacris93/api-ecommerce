@@ -16,14 +16,16 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+Route::group(['middleware' => ['auth:sanctum']], function ()
+{
+    Route::apiResource('products', 'ProductController');
+    Route::middleware('auth:sanctum')->post('products/rate', [ProductController::class, 'rate']);
+    Route::post('/newsletter', [NewsLetterController::class, 'send']);
+    Route::post('logout', [AuthController::class, 'logout']);
+});
 //'auth:api'
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-Route::apiResource('products', 'ProductController');
-
-Route::post('/newsletter', [NewsLetterController::class, 'send']);
-
-Route::middleware('auth:sanctum')->post('products/rate', [ProductController::class, 'rate']);

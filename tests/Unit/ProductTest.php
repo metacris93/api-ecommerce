@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
@@ -14,30 +15,22 @@ class ProductTest extends TestCase
     use RefreshDatabase, WithFaker;
     public function test_a_product_belongs_to_category()
     {
+        Sanctum::actingAs(User::factory()->create());
         $category = Category::factory()->create();
-        $product = Product::factory()->create(['category_id' => $category->id]);
+        $product = Product::factory()
+            ->for($category)
+            ->for(auth()->user(), 'createdBy')
+            ->create();
         $this->assertInstanceOf(Category::class, $product->category);
     }
     public function test_a_product_belongs_to_an_administrator()
     {
-        $user = User::factory()->create();
+        $user = Sanctum::actingAs(User::factory()->create());
         $category = Category::factory()->create();
-        $product = Product::factory()->create([
-            'created_by' => $user->id,
-            'category_id' => $category->id,
-        ]);
+        $product = Product::factory()
+            ->for($category)
+            ->for(auth()->user(), 'createdBy')
+            ->create();
         $this->assertInstanceOf(User::class, $product->createdBy);
-    }
-    public function test_a_product_can_be_rated()
-    {
-        $user = User::factory()->create();
-        $category = Category::factory()->create();
-        $product = Product::factory()->create([
-            'created_by' => $user->id,
-            'category_id' => $category->id,
-        ]);
-        $product->rate($user, 5);
-        $this->assertCount(1, $user->rates);
-        $this->assertTrue($product->rates->contains('id', $user->id));
     }
 }
