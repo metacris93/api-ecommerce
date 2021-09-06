@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCreatedByToProductsTable extends Migration
+class AddImageToProductsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,7 @@ class AddCreatedByToProductsTable extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->foreignId('created_by')
-                ->nullable()
-                ->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->text('image_url')->nullable();
         });
     }
 
@@ -30,9 +26,7 @@ class AddCreatedByToProductsTable extends Migration
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
-            Schema::disableForeignKeyConstraints();
-            $table->dropForeign(['created_by']);
-            Schema::enableForeignKeyConstraints();
+            $table->dropColumn('image_url');
         });
     }
 }

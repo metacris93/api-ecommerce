@@ -21,8 +21,4 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
-    // public function rate(User $user, int $value)
-    // {
-    //     return $this->rates()->syncWithPivotValues([$user->id], ['value' => $value]);
-    // }
 }

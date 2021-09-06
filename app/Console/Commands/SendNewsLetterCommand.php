@@ -14,7 +14,9 @@ class SendNewsLetterCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'send:newsletter {emails?*}';
+    protected $signature = 'send:newsletter
+        {emails?*}: Correos electronicos a los cuales enviar directamente
+        {--s|schedule: Si debe ser ejecutado directamente o no}';
 
     /**
      * The console command description.
@@ -41,29 +43,32 @@ class SendNewsLetterCommand extends Command
     public function handle()
     {
         $emails = $this->argument('emails');
+        $schedule = $this->option('schedule');
+
         $builder = User::query();
         if ($emails)
         {
             $builder->whereIn('email', $emails);
         }
+        $builder->whereNotNull('email_verified_at');
         $count = $builder->count();
-        $this->output->progressStart($count);
 
         if ($count)
         {
-            $builder
-                ->whereNotNull('email_verified_at')
-                //->whereDate('email_verified_at', '<=', Carbon::now()->subDays(7)->format('Y-m-d'))
-                ->each(function (User $user)
+            $this->info("Se enviaran {$count} correos");
+            if ($this->confirm('¿Estas de acuerdo?') || $schedule)
+            {
+                $this->output->progressStart($count);
+                $builder->each(function (User $user)
                 {
                     $user->notify(new NewsLetterNotification());
+                    $this->output->progressAdvance();
                 });
-            $this->info("Se enviaron {$count} correos");
-            $this->output->progressFinish();
+                $this->output->progressFinish();
+                $this->info("Correos enviados");
+                return;
+            }
         }
-        else
-        {
-            $this->info("no se envió ningún correo");
-        }
+        $this->info("no se envió ningún correo");
     }
 }

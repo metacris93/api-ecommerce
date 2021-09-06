@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use App\Events\ModelRated;
+
 trait CanRate
 {
     public function ratings($model = null)
@@ -27,6 +29,7 @@ trait CanRate
             'score' => $score,
             'rateable_type' => get_class($model)
         ]);
+        event(new ModelRated($this, $model, $score));
         return true;
     }
     public function hasRated($model)

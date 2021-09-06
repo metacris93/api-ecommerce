@@ -35,8 +35,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $product = Product::create($request->all());;
-        return $product;
+        $product = Product::create($request->all());
+        return $this->success(new ProductResource($product), 'OK');
     }
 
     /**
@@ -60,7 +60,7 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $product->update($request->all());
-        return $product;
+        return $this->success(new ProductResource($product), 'OK');
     }
 
     /**
@@ -72,11 +72,6 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
-
-        return response()->json();
-    }
-    public function rate(Request $request)
-    {
-        
+        return $this->success([], 'OK');
     }
 }

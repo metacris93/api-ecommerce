@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\Api\V1\ProductRatingController;
 use App\Http\Controllers\NewsLetterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,8 @@ Route::group(['middleware' => ['auth:sanctum']], function ()
 {
     Route::apiResource('products', 'ProductController');
     Route::middleware('auth:sanctum')->post('products/rate', [ProductController::class, 'rate']);
+    Route::post('products/{product}/rate', [ProductRatingController::class, 'rate']);
+    Route::post('products/{product}/unrate', [ProductRatingController::class, 'unrate']);
     Route::post('/newsletter', [NewsLetterController::class, 'send']);
     Route::post('logout', [AuthController::class, 'logout']);
 });
