@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\UpdateLastLogin;
 use App\Models\User;
 use App\Traits\ApiResponser;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -29,6 +32,7 @@ class AuthController extends Controller
             'token' => $request->user()->createToken('AUTH_TOKEN')->plainTextToken,
             'token_type' => 'Bearer'
         ];
+        //dispatch(new UpdateLastLogin());
         return $this->success($res, 'OK');
     }
     public function logout(Request $request)
@@ -54,6 +58,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'Bearer'
         ];
+        event(new Registered($user));
         return $this->success($res, 'OK');
     }
     public function validateLogin(Request $request)

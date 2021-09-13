@@ -23,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->app->bindMethod([UpdateLastLogin::class, 'handle'], function ($job, $app) {
+            return $job->handle($app->make(Login::class));
+        });
     }
 }

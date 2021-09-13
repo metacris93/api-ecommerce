@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ProductRatingController;
+use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\NewsLetterController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +29,7 @@ Route::group(['middleware' => ['auth:sanctum']], function ()
     Route::post('products/{product}/unrate', [ProductRatingController::class, 'unrate']);
     Route::post('/newsletter', [NewsLetterController::class, 'send']);
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
 });
 //'auth:api'
 // Route::middleware('auth:api')->get('/user', function (Request $request) {

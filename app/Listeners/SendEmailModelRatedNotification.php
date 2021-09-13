@@ -7,8 +7,8 @@ use App\Models\Product;
 use App\Notifications\ModelRatedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-
-class SendEmailModelRatedNotification
+// cuando implementas de shouldQueue estas convirtiendo el listener en una cola de trabajo
+class SendEmailModelRatedNotification implements ShouldQueue
 {
     /**
      * Create the event listener.
