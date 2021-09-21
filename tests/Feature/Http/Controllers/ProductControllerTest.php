@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Foundation\Testing\Concerns\InteractsWithExceptionHandling;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
@@ -12,7 +13,7 @@ use Tests\TestCase;
 
 class ProductControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, InteractsWithExceptionHandling;
 
     public function test_index()
     {
@@ -86,5 +87,32 @@ class ProductControllerTest extends TestCase
         $response->assertSuccessful();
         $response->assertHeader('content-type', 'application/json');
         $this->assertDeleted($product);
+    }
+    /**
+     * @dataProvider scoreProductsDataProvider
+    */
+    public function test_rate_product($score)
+    {
+        Sanctum::actingAs(User::factory()->create());
+        $product = Product::factory()
+            ->for(Category::factory()->create())
+            ->create();
+        $data = [
+            'score' => $score
+        ];
+        $response = $this->postJson("/api/v1/products/{$product->getKey()}/rate", $data);
+        $response->assertStatus(500);
+        $response->assertHeader('content-type', 'application/json');
+    }
+    public function scoreProductsDataProvider()
+    {
+        return [
+            [-1],
+            [0],
+            [6],
+            [1000],
+            [-100000],
+            [10000000]
+        ];
     }
 }

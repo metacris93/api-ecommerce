@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Exceptions\InvalidScoreException;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Rating;
@@ -53,5 +54,16 @@ class RatingTest extends TestCase
 
         $this->assertInstanceOf(Product::class, $rating->rateable);
         $this->assertInstanceOf(User::class, $rating->qualifier);
+    }
+    public function test_rating_invalid_score_exception()
+    {
+        $this->expectException(InvalidScoreException::class);
+        /** @var User $user */
+        $user = User::factory()->create();
+        /** @var Product $product */
+        $category = Category::factory()->create();
+        $product = Product::factory()->for($category)->create();
+
+        $user->rate($product, 6);
     }
 }
